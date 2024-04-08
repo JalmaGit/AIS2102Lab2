@@ -8,7 +8,7 @@ class Observer:
         k_b = k_t
         J_tot = 2.15 * 10**(-5)
         R_a = 8.4
-        
+
         self.A_omega = (k_b * k_t)/(J_tot*R_a)
         self.B_omega = k_t/(R_a*J_tot)
 
@@ -38,6 +38,6 @@ class Observer:
 
         self.errorInAngle = output_theta - doubleIntegrator
 
-        speed, angle = integrator, doubleIntegrator
+        EstimatedSpeed, EstimatedAngle = integrator, doubleIntegrator
 
-        return speed, angle
+        return EstimatedSpeed, EstimatedAngle
