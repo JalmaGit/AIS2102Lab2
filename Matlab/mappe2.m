@@ -80,20 +80,22 @@ f3.Position = [950,100,400,600];
 Config = RespConfig('Amplitude',18);
 
 A = [0 1 ; 0 -(K_t*K_b)/(J*R_a)];
-B = [0 ; 1];
-C = [K_t/(R_a*J) 0];
+B = [0 ; K_t/(R_a*J)];
+C = [1 0];
 D = 0;
 
 poles=[-8+8.392j, -8-8.392j];
 K = acker(A,B,poles)
 
 A_cl = A - B*K;
-test_sys = ss(A_cl,B,C,D);
-pole(test_sys)
-f4 = figure(4);
-step(test_sys,3)
-title('Step Response Closed Loop')
+cl_sys = ss(A_cl,B,C,D);
 
-% PID Controller
-Kp = 300;
-regulator = pidtune(angle_sys, 'PID')
+% Forward gain to reduce state space error
+Kr = 1/dcgain(cl_sys)
+B_cl = Kr*B;
+
+cl_c_sys = ss(A_cl,B_cl,C,D);
+
+f4 = figure(4);
+step(cl_c_sys,3)
+title('Step Response Closed Loop')
