@@ -62,10 +62,21 @@ def control(data, lock):
         dt = getDT()
         ### Your code goes here
 
-        angle = qube.getMotorAngle()
+        setAngle = 45 #Degrees
+        setRPM = 1000 #RPM
+
+        #Convert to rad
+        setAngle = setAngle /180 * math.pi
+        setRPM = setRPM * math.pi/30
+        
+
+        angle = qube.getMotorAngle()/180 * math.pi
         speed = qube.getMotorRPM() * math.pi/30
         #volts = pid.regulate(angle, 90, dt)
-        volts = state_space.regulate(angle, speed, 90)
+        #volts = state_space.regulateAngleWithoutI(angle, speed,setAngle)
+        volts = state_space.regulateSpeedWithoutI(speed, setRPM)
+
+        #volts = state_space.regulateWithIntegrator(angle, speed, setAngle, dt)
 
         qube.setMotorVoltage(volts)
 
