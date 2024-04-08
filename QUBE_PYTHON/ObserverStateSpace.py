@@ -8,22 +8,36 @@ class Observer:
         k_b = k_t
         J_tot = 2.15 * 10**(-5)
         R_a = 8.4
-
-        #self.A_theta = np.array([[0, 1],[0,-((k_b * k_t)/(J_tot*R_a))]])
-        #self.B_theta = np.array([[0, 1],[0,k_t/(R_a*J_tot)]])
+        
         self.A_omega = (k_b * k_t)/(J_tot*R_a)
         self.B_omega = k_t/(R_a*J_tot)
 
+        self.C_omega = 1
+        self.C_theta = 1
+
         self.previousIntegralA = 0
+        self.previousDoubleIntegral = 0
+
+        self.errorInAngle = 0
+        self.errorInSpeed = 0
 
         print (f"{self.A_omega=}, {self.B_omega=}")
 
     
     def observer(self, input_voltage, output_theta, output_omega, dt):
 
-        self.B_omega * input_voltage + self.l1 + self.A_omega * self.previousIntegralA
+        x_dot = self.B_omega * input_voltage + self.l1 * self.errorInSpeed + self.A_omega * self.previousIntegralA
 
+        integrator = self.previousIntegralA + x_dot * dt
+        self.previousIntegralA = integrator
 
+        self.errorInSpeed = output_omega - integrator
 
-        angle, speed = 0
-        return angle, speed
+        doubleIntegrator = self.previousDoubleIntegral + (integrator + self.errorInAngle) * dt
+        self.previousDoubleIntegral = doubleIntegrator
+
+        self.errorInAngle = output_theta - doubleIntegrator
+
+        speed, angle = integrator, doubleIntegrator
+
+        return speed, angle

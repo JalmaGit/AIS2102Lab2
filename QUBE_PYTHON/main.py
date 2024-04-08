@@ -18,7 +18,7 @@ from liveplot import *
 from time import time
 import threading
 import math
-import StateSpace
+import StateSpaceController
 
 # Replace with the Arduino port. Can be found in the Arduino IDE (Tools -> Port:)
 port = "COM5"
@@ -43,7 +43,7 @@ def control(data, lock):
     lastTime = time()
     delay = 4.0
     volts = 18
-    state_space = StateSpace.StateSpaceController()
+    state_space = StateSpaceController.StateSpaceController()
     
 
     while True:
