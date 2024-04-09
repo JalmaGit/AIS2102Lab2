@@ -18,7 +18,7 @@ from liveplot import *
 from time import time
 import threading
 import math
-import StateSpace
+import StateSpaceController
 
 # Replace with the Arduino port. Can be found in the Arduino IDE (Tools -> Port:)
 port = "COM5"
@@ -43,7 +43,7 @@ def control(data, lock):
     lastTime = time()
     delay = 4.0
     volts = 18
-    state_space = StateSpace.StateSpaceController()
+    state_space = StateSpaceController.StateSpaceController()
     
 
     while True:
@@ -62,15 +62,24 @@ def control(data, lock):
         dt = getDT()
         ### Your code goes here
 
-        angle = qube.getMotorAngle()
+        setAngle = 45 #Degrees
+        setRPM = 1000 #RPM
+
+        #Convert to rad
+        setAngle = setAngle /180 * math.pi
+        setRPM = setRPM * math.pi/30
+        
+        angle = qube.getMotorAngle()/180 * math.pi
         speed = qube.getMotorRPM() * math.pi/30
         #volts = pid.regulate(angle, 90, dt)
-        volts = state_space.regulate(angle, speed, 90)
+        #volts = state_space.regulateAngleWithoutI(angle, speed,setAngle)
+        #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
+        #volts = state_space.regulateWithIntegrator(angle, speed, setAngle, dt)
 
         qube.setMotorVoltage(volts)
 
         ####Debugging
-        print(f'Debugging: volts = {round(volts,2)} and Time = {round(time() - lastTime,2)} and Angle = {angle}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
+        #print(f'Debugging: volts = {round(volts,2)} and Time = {round(time() - lastTime,2)} and Angle = {angle}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
 
 
 def getDT():
