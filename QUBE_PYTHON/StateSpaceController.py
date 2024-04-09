@@ -4,10 +4,13 @@ class StateSpaceController:
 
     def __init__(self):
 
+        #Peters values = [1.9985, 0.2033, 6.1629]
+        #KrohnOgMagnus values = [0.09, 0.007, 0.9471, 0]
+
         #K_name = [k1, k2, k3, scaling]
         self.K_angle = [0.5780, 0.0268, 0, 0.5780]
         self.K_speed = [0, -0.00764, 0, 0.0344]
-        self.K_angle_wI = [0, 0, 0, 0]
+        self.K_angle_wI = [0.4059, 0.033, 1.5993, 0] #[1.1283, 0.0612, 4.6228, 0] #[4.706, 0.2848,34.6818, 0] #[1.954, 0.1128, 11.5606, 0]
         self.K_speed_wI = [0, 0, 0, 0]
         
         self.prevAngleIntegral = 0
@@ -39,8 +42,8 @@ class StateSpaceController:
     
     def regulateAngleWithI(self, output_theta, output_omega, setpoint, dt):
         #Integrator
-        x_N = self.prevIntegral + (setpoint - output_theta) * dt
-        self.prevIntegral = x_N
+        x_N = self.prevAngleIntegral + (setpoint - output_theta) * dt
+        self.prevAngleIntegral = x_N
 
         #Kp and Kd calc
         kx = output_theta * self.K_angle_wI[0] + output_omega * self.K_angle_wI[1]
@@ -58,8 +61,8 @@ class StateSpaceController:
     
     def regulateSpeedWithI(self, output_omega, setpoint, dt):
         #Integrator
-        x_N = self.prevIntegral + (setpoint - output_omega) * dt
-        self.prevIntegral = x_N
+        x_N = self.prevSpeedIntegral + (setpoint - output_omega) * dt
+        self.prevSpeedIntegral = x_N
 
         #Kp and Kd calc
         kx = output_omega * self.K_angle_wI[1]
