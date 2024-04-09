@@ -46,7 +46,8 @@ def control(data, lock):
     volts = 18
     state_space = StateSpaceController.StateSpaceController()
     observer = ObserverStateSpace.Observer()
-    estimatedSpeed, estimatedAngle = 0, 0
+
+    estimatedSpeed = 0
 
     while True:
         # Updates the qube - Sends and receives data
@@ -65,7 +66,7 @@ def control(data, lock):
         ### Your code goes here
 
         setAngle = 45 #Degrees
-        setRPM = 1000 #RPM
+        setRPM = 2000 #RPM
 
         #Convert to rad
         setAngle = setAngle /180 * math.pi
@@ -80,20 +81,20 @@ def control(data, lock):
 
         #volts = state_space.regulateAngleWithoutI(angle, speed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
-        #volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
+        volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
 
-        #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
+        #volts = state_space.regulateAngleWithoutI(angle, estimatedSpeed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
-        #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
+        #volts = state_space.regulateAngleWithI(angle, estimatedSpeed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(estimatedSpeed, setAngle, setRPM, dt)
         
-        estimatedSpeed, estimatedAngle = observer.observer(volts, angle, speed, dt)
+        estimatedSpeed = observer.observer(volts, angle, dt)
 
         qube.setMotorVoltage(volts)
 
         ####Debugging
-        #print(f'Debugging: volts = {round(volts,2)} and Time = {round(time() - lastTime,2)} and Angle = {angle}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
+        print(f'Debugging: volts = {round(volts,2)}, estSpeed = {round(estimatedSpeed * 30/math.pi,2)}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
 
 
 def getDT():
