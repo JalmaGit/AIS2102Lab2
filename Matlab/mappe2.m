@@ -28,12 +28,10 @@ C = 1;
 D = 0;
 ang_vel_state_sys = ss(A, B, C, D);
 
-
-
 % STEP PLOTS
 Config = RespConfig('Amplitude',18);
 
-actual_system = tf(75.829*370/15,[1,16.667,75.829])
+actual_system = tf(75.829*370,[1,16.667,75.829])
 
 f1 = figure(1);
 subplot(2,1,1)
@@ -116,7 +114,7 @@ step(Pid_controlled)
 t = 0:0.01:2;
 x0 = [0.1 0];
 
-L = place(A',C',poles*10)';
+L = place(A',C',poles*10)'
 
 At = [A-B*K             B*K
       zeros(size(A))    A-L*C];
