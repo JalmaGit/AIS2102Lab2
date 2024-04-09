@@ -16,22 +16,24 @@ ang_vel_sys = tf(K_t/(R_a*J), [1, (K_t*K_b)/(J*R_a)]);
 
 % State space for angle
 A = [0 1 ; 0 -(K_t*K_b)/(J*R_a)];
-B = [0 ; 1];
-C = [K_t/(R_a*J) 0];
+B = [0 ; K_t/(R_a*J)];
+C = [1 0];
 D = 0;
-angle_state_sys = ss(A, B, C, D)
+angle_state_sys = ss(A, B, C, D);
 
 % State space for angular velocity
 A = -(K_t*K_b)/(J*R_a);
-B = 1;
-C = K_t/(R_a*J);
+B = K_t/(R_a*J);
+C = 1;
 D = 0;
 ang_vel_state_sys = ss(A, B, C, D);
+
+
 
 % STEP PLOTS
 Config = RespConfig('Amplitude',18);
 
-actual_system = tf(75.829*370/15,[1,16.667,75.829]);
+actual_system = tf(75.829*370/15,[1,16.667,75.829])
 
 f1 = figure(1);
 subplot(2,1,1)
@@ -79,8 +81,8 @@ f3.Position = [950,100,400,600];
 % Pole Placement Controller
 Config = RespConfig('Amplitude',18);
 
-A = [0 1 ; 0 -(K_t*K_b)/(J*R_a)];
-B = [0 ; K_t/(R_a*J)];
+A = [0 1 ; 0 -(K_t*K_b)/(J*R_a)]
+B = [0 ; K_t/(R_a*J)]
 C = [1 0];
 D = 0;
 
@@ -99,3 +101,31 @@ cl_c_sys = ss(A_cl,B_cl,C,D);
 f4 = figure(4);
 step(cl_c_sys,3)
 title('Step Response Closed Loop')
+
+% PID
+Kp = 1.296; % 0.04
+Ki = 2.736; % 0.014
+Kd = 0.08723; % 0.002
+
+pid_controller = pid(Kp,Ki,Kd);
+Pid_controlled = feedback(angle_state_sys*pid_controller,1);
+f9 = figure(9);
+step(Pid_controlled)
+
+% OBSERVER!!!!!!!!!
+t = 0:0.01:2;
+x0 = [0.1 0];
+
+L = place(A',C',poles*10)';
+
+At = [A-B*K             B*K
+      zeros(size(A))    A-L*C];
+Bt = [B*Kr
+      zeros(size(B))];
+Ct = [C zeros(size(C))];
+
+test = ss(At, Bt, Ct, 0);
+
+f5 = figure(5);
+lsim(test,zeros(size(t)),t,[x0 x0]);
+title('(with observer)')
