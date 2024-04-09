@@ -1,8 +1,8 @@
 class Observer:
 
     def __init__(self):
-        self.l1 = 0 #Speed
-        self.l2 = 0 #Angle
+        self.l1 = 150 #Speed
+        self.l2 = 1197 #Angle
 
         k_t = 0.042
         k_b = k_t

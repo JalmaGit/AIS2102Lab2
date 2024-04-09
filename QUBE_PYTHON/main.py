@@ -19,6 +19,7 @@ from time import time
 import threading
 import math
 import StateSpaceController
+import ObserverStateSpace
 
 # Replace with the Arduino port. Can be found in the Arduino IDE (Tools -> Port:)
 port = "COM5"
@@ -44,7 +45,8 @@ def control(data, lock):
     delay = 4.0
     volts = 18
     state_space = StateSpaceController.StateSpaceController()
-    
+    observer = ObserverStateSpace.Observer()
+    estimatedSpeed, estimatedAngle = 0, 0
 
     while True:
         # Updates the qube - Sends and receives data
@@ -71,10 +73,22 @@ def control(data, lock):
         
         angle = qube.getMotorAngle()/180 * math.pi
         speed = qube.getMotorRPM() * math.pi/30
+
+        ## Change Between regulators by commenting and uncommenting
+
         #volts = pid.regulate(angle, 90, dt)
-        #volts = state_space.regulateAngleWithoutI(angle, speed,setAngle)
+
+        #volts = state_space.regulateAngleWithoutI(angle, speed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
-        #volts = state_space.regulateWithIntegrator(angle, speed, setAngle, dt)
+        #volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
+        #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
+
+        #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
+        #volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
+        #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
+        #volts = state_space.regulateSpeedWithI(estimatedSpeed, setAngle, setRPM, dt)
+        
+        estimatedSpeed, estimatedAngle = observer.observer(volts, angle, speed, dt)
 
         qube.setMotorVoltage(volts)
 

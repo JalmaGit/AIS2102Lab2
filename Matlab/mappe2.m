@@ -29,19 +29,19 @@ D = 0;
 ang_vel_state_sys = ss(A, B, C, D);
 
 % STEP PLOTS
-Config = RespConfig('Amplitude',18);
+%Config = RespConfig('Amplitude',18);
 
-actual_system = tf(75.829*370/15,[1,16.667,75.829]);
+actual_system = tf(75.829*370/18,[1,16.667,75.829]);
 
 f1 = figure(1);
 subplot(2,1,1)
-step(angle_state_sys, 3, Config)
+step(angle_state_sys, 3)
 title('Step Response Angle')
 subplot(2,1,2)
 hold on
-step(ang_vel_state_sys,3, Config)
+step(ang_vel_state_sys,3)
 title('Step Response Angular Velocity')
-step(actual_system, 3, Config)
+step(actual_system, 3)
 hold off
 
 % RAMP PLOTS
