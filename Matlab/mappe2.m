@@ -31,7 +31,7 @@ ang_vel_state_sys = ss(A, B, C, D);
 % STEP PLOTS
 %Config = RespConfig('Amplitude',18);
 
-actual_system = tf(75.829*370/18,[1,16.667,75.829]);
+actual_system = tf(7.25*370/17,[1,7.25]);
 
 f1 = figure(1);
 subplot(2,1,1)
