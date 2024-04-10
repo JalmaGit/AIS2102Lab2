@@ -25,3 +25,4 @@ Kr = 1/dcgain(cl_sys)
 B_cl = Kr*B;
 
 cl_c_sys = ss(A_cl,B_cl,C,D);
+step(cl_c_sys)
