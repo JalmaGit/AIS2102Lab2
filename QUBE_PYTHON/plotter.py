@@ -1,14 +1,17 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import numpy as np
+
 
 def find_markers(data):
     markers_on_finder = []
+    approxMaxRange = 2800
     x = 0
     r = 0
     for i in data["rpm"]:
         r += 1
-        if i > 3560 and not(x == -1):
+        if i > approxMaxRange and not(x == -1):
             x += 1
 
         if x == 20:
@@ -18,7 +21,7 @@ def find_markers(data):
         if i <= 0 and (x == -1):
             x = 0
     return markers_on_finder
-
+    
 def check_in_range(i):
     if (i - 1000) < 0:
         return 0
@@ -43,12 +46,13 @@ def plottingWithSpeed(filename, title):
     dataframe = pd.read_csv(filename)
     
     markers_on = find_markers(dataframe)
+    print(markers_on)
     markers_on_98 = find_other_markers(dataframe,markers_on,0.98)
     markers_on_0 = find_other_markers(dataframe,markers_on,0.0)
     
     fig, ax = plt.subplots()
     ax.plot(dataframe["time"], dataframe["rpm"], '-', label='System Response')
-    ax.plot(dataframe["time"], dataframe["rpm"], 'bo',markevery=markers_on, label=f'Max Speed = {dataframe["rpm"][markers_on[3]]}rpm, T_p = {round(dataframe["time"][markers_on[3]],2)}sec')
+    ax.plot(dataframe["time"], dataframe["rpm"], 'bo',markevery=markers_on, label=f'Max Speed = {dataframe["rpm"][markers_on[3]]}rpm')#, T_p = {round(dataframe["time"][markers_on[3]],2)}sec')
     ax.plot(dataframe["time"], dataframe["rpm"], 'ro',markevery=markers_on_98, label=f'98% Speed = {dataframe["rpm"][markers_on_98[3]]}rpm, T_s = {round(dataframe["time"][markers_on_98[3]],2)}sec')
     ax.plot(dataframe["time"], dataframe["rpm"], 'go',markevery=markers_on_0, label=f'0% Speed = {dataframe["rpm"][markers_on_0[3]]}rpm, T_0 {round(dataframe["time"][markers_on_0[3]],2)}sec')
     ax.set_xlabel("time in seconds")
@@ -75,16 +79,39 @@ def plottingWithAngle(filename):
     fig.show()
 
 
-plottingWithSpeed("Gen_Data/StepInput.csv", "Step Input")
-plottingWithSpeed("Gen_Data/RampInput6.csv", "Ramp input with u(t) = 6t")
-plottingWithSpeed("Gen_Data/RampInput5.csv", "Ramp input with u(t) = 5t")
-plottingWithSpeed("Gen_Data/Parabolic2.csv", "Parabolic input with u(t) = 2t^2")
-plottingWithSpeed("Gen_Data/Parabolic1_47.csv", "Parabolic input with u(t) = 1.47t^2")
-plottingWithSpeed("Gen_Data/SineWaveOmegaPI_4.csv", "Sine wave input with 9sin(4/PI * t) + 9")
+#plottingWithSpeed("Gen_Data/StepInput.csv", "Step Input")
+#plottingWithSpeed("Gen_Data/RampInput6.csv", "Ramp input with u(t) = 6t")
+#plottingWithSpeed("Gen_Data/RampInput5.csv", "Ramp input with u(t) = 5t")
+#plottingWithSpeed("Gen_Data/Parabolic2.csv", "Parabolic input with u(t) = 2t^2")
+#plottingWithSpeed("Gen_Data/Parabolic1_47.csv", "Parabolic input with u(t) = 1.47t^2")
+#plottingWithSpeed("Gen_Data/SineWaveOmegaPI_4.csv", "Sine wave input with 9sin(4/PI * t) + 9")
 
-plottingWithAngle("Gen_Data/StepInput.csv")
+#plottingWithAngle("Gen_Data/StepInput.csv")
+
+plottingWithSpeed("Gen_Data/StepInput12volt.csv", "Step Input with 12 volts")
 
 
 plt.show()
 
 #Parabolic input plot with a quadractic function v(t) = 2t^2
+
+##Testing Stuff, Is of no intrest
+"""
+    markers_on_finder = []
+    last20rpm = np.zeros((20,),dtype=int)
+    runs = 0
+    found = False
+    for x in data["rpm"]:
+        runs +=1
+        last20rpm = np.delete(last20rpm, 19, None)
+        last20rpm = np.insert(last20rpm, 0, x)
+        if findMaxRpm(last20rpm) and not(found):
+            found = True
+            markers_on_finder.append(runs)
+            print(x)
+            last20rpm = np.zeros((20,),dtype=int)
+        elif not(findMaxRpm(last20rpm)):
+            found = False
+
+    return markers_on_finder
+"""
