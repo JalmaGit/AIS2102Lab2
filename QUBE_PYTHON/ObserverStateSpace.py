@@ -45,19 +45,6 @@ class Observer:
         self.errorInAngle = output_theta - theta
 
         estimatedSpeed = theta_dot
+        estimatedAngle = theta
 
-        return estimatedSpeed
-    
-"""
-        self.errorInAngle = output_theta - doubleIntegrator
-        
-        x_dot = self.B_omega * input_voltage + self.l1 * self.errorInSpeed + self.A_omega * self.previousIntegralA
-
-        integrator = self.previousIntegralA + x_dot * dt
-        self.previousIntegralA = integrator
-
-        self.errorInSpeed = output_omega - integrator
-
-        doubleIntegrator = self.previousDoubleIntegral + (integrator + self.errorInAngle * self.l2) * dt
-        self.previousDoubleIntegral = doubleIntegrator
-"""
+        return estimatedSpeed, estimatedAngle

@@ -18,8 +18,9 @@ from liveplot import *
 from time import time
 import threading
 import math
-import StateSpaceController
-import ObserverStateSpace
+import StateSpaceController as SSC
+import ObserverStateSpace as OSS
+import SystemValidationTest as SVT
 
 # Replace with the Arduino port. Can be found in the Arduino IDE (Tools -> Port:)
 port = "COM5"
@@ -41,14 +42,27 @@ def control(data, lock):
     m_target = 0
     p_target = 0
     pid = PID()
-    lastTime = time()
-    delay = 4.0
-    volts = 18
-    state_space = StateSpaceController.StateSpaceController()
-    observer = ObserverStateSpace.Observer()
+    volts = 12
+    state_space = SSC.StateSpaceController()
+    observer = OSS.Observer()
+    systemTest = SVT.SystemValidationTest(12, 4)
+
+    print(systemTest.volt)
 
     estimatedSpeed = 0
+    estimatedAngle = 0
 
+    setAngle = 90 #Degrees
+    setRPM = 2000 #RPM
+
+    print(f"{setRPM=}")
+
+    #Convert to rad
+    setAngle = setAngle /180 * math.pi
+    setRPM = setRPM * math.pi/30
+
+    print(f"{setRPM=}")
+    
     while True:
         # Updates the qube - Sends and receives data
         qube.update()
@@ -64,37 +78,35 @@ def control(data, lock):
         # Get deltatime
         dt = getDT()
         ### Your code goes here
-
-        setAngle = 45 #Degrees
-        setRPM = 2000 #RPM
-
-        #Convert to rad
-        setAngle = setAngle /180 * math.pi
-        setRPM = setRPM * math.pi/30
         
-        angle = qube.getMotorAngle()/180 * math.pi
+        ## System Tests
+
+        #volts = systemTest.stepInput()
+
+
+        qube.setMotorVoltage(volts)
+
+        angle = qube.getMotorAngle() #/180 * math.pi
         speed = qube.getMotorRPM() * math.pi/30
 
         ## Change Between regulators by commenting and uncommenting
 
-        #volts = pid.regulate(angle, 90, dt)
+        volts = pid.regulate(angle, 90, dt)
 
         #volts = state_space.regulateAngleWithoutI(angle, speed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
-        volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
+        #volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
 
-        #volts = state_space.regulateAngleWithoutI(angle, estimatedSpeed, setAngle)
+        #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
-        #volts = state_space.regulateAngleWithI(angle, estimatedSpeed, setAngle, dt)
-        #volts = state_space.regulateSpeedWithI(estimatedSpeed, setAngle, setRPM, dt)
+        #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
+        #volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
         
-        estimatedSpeed = observer.observer(volts, angle, dt)
-
-        qube.setMotorVoltage(volts)
+        #estimatedSpeed, estimatedAngle = observer.observer(volts, angle, dt)
 
         ####Debugging
-        print(f'Debugging: volts = {round(volts,2)}, estSpeed = {round(estimatedSpeed * 30/math.pi,2)}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
+        #print(f'Debugging: volts = {round(volts,2)}, estSpeed = {round(estimatedSpeed * 30/math.pi,2)}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
 
 
 def getDT():
