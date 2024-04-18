@@ -44,7 +44,7 @@ def control(data, lock):
     pid = PID()
     volts = 12
     state_space = SSC.StateSpaceController()
-    observer = OSS.Observer()
+    observer = OSS.Observer(70.2326, 1089.5)
     systemTest = SVT.SystemValidationTest(12, 4)
 
     print(systemTest.volt)
@@ -86,16 +86,16 @@ def control(data, lock):
 
         qube.setMotorVoltage(volts)
 
-        angle = qube.getMotorAngle() #/180 * math.pi
+        angle = qube.getMotorAngle() /180 * math.pi
         speed = qube.getMotorRPM() * math.pi/30
 
         ## Change Between regulators by commenting and uncommenting
 
-        volts = pid.regulate(angle, 90, dt)
+        #volts = pid.regulate(angle, 90, dt)
 
         #volts = state_space.regulateAngleWithoutI(angle, speed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
-        #volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
+        volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
 
         #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
@@ -103,10 +103,11 @@ def control(data, lock):
         #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
         
-        #estimatedSpeed, estimatedAngle = observer.observer(volts, angle, dt)
+        estimatedSpeed, estimatedAngle = observer.observerFromMatrix(volts, angle, dt)
 
         ####Debugging
-        #print(f'Debugging: volts = {round(volts,2)}, estSpeed = {round(estimatedSpeed * 30/math.pi,2)}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
+        #print(f'Debugging: volts = {round(volts,2)}, estAngle = {round(estimatedAngle,2)}, error = {round(error,2)}')
+        #print(f'Debugging: volts = {round(volts,2)}, estSpeed = {round(estimatedSpeed * 30/math.pi,2)}, estAngle = {estimatedAngle}, deltaTime = {round(dt,10)}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
 
 
 def getDT():

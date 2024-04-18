@@ -6,7 +6,7 @@ import numpy as np
 
 def find_markers(data):
     markers_on_finder = []
-    approxMaxRange = 2800
+    approxMaxRPM = 2800
     x = 0
     r = 0
     for i in data["rpm"]:
