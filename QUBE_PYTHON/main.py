@@ -44,7 +44,7 @@ def control(data, lock):
     pid = PID()
     volts = 12
     state_space = SSC.StateSpaceController()
-    observer = OSS.Observer(70.2326, 1089.5)
+    observer = OSS.Observer(34.1473 , 231.4649)
     systemTest = SVT.SystemValidationTest(12, 4)
 
     print(systemTest.volt)
@@ -52,7 +52,7 @@ def control(data, lock):
     estimatedSpeed = 0
     estimatedAngle = 0
 
-    setAngle = 90 #Degrees
+    setAngle = 360 #Degrees
     setRPM = 2000 #RPM
 
     print(f"{setRPM=}")
