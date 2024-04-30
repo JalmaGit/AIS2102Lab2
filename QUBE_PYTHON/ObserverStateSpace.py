@@ -12,8 +12,9 @@ class Observer:
         k_b = k_t
         J_tot = 2.15 * 10**(-5)
         R_a = 8.4
+        D = 2.025 * 10**(-4)
 
-        self.A = np.array([[0,1],[0, -(k_b * k_t)/(J_tot*R_a)]])
+        self.A = np.array([[0,1],[0, -((k_b * k_t)/(J_tot*R_a)+ D/J_tot)]])
         self.B = np.array([[0],[k_t/(R_a*J_tot)]])
         self.prevX_hat = np.array([[0],[0]])
         
