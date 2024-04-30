@@ -14,7 +14,7 @@ D_m2 = (8.333*R_a*J+K_t*K_b)/R_a;
 D_m = 2.025e-4;
 
 OS = 15;
-Ts = 3;
+Ts = 2;
 
 %% First order System
 
@@ -73,7 +73,7 @@ zeta = -log(OS/100)/sqrt(pi^2+log(OS/100)^2)
 wd = (4/Ts)*tan(acos(zeta));
 
 %Set poles
-poles = [-(4/Ts)*30, -4/Ts+wd*1i, -4/Ts-wd*1i];
+poles = [-(4/Ts)*25, -4/Ts+wd*1i, -4/Ts-wd*1i];
 
 K = acker(Ai,Bt,poles)
 Ai_cl = Ai-Bt*K;
