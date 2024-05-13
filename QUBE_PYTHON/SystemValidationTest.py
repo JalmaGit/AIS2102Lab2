@@ -13,9 +13,9 @@ class SystemValidationTest:
                 self.volt = 0
             return self.volt
         elif time() < (self.lastTime + self.delay*2):
-            self.volt = 12
+            self.volt = 5
             return self.volt
         else:
-            self.volt = 12
+            self.volt = 5
             self.lastTime = time()
             return self.volt

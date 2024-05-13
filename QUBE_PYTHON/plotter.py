@@ -11,7 +11,7 @@ def find_markers(data):
     r = 0
     for i in data["rpm"]:
         r += 1
-        if i > approxMaxRange and not(x == -1):
+        if i > 1160 and not(x == -1):
             x += 1
 
         if x == 20:
@@ -47,7 +47,7 @@ def plottingWithSpeed(filename, title):
     
     markers_on = find_markers(dataframe)
     print(markers_on)
-    markers_on_98 = find_other_markers(dataframe,markers_on,0.98)
+    markers_on_98 = find_other_markers(dataframe,markers_on,0.63)
     markers_on_0 = find_other_markers(dataframe,markers_on,0.0)
     
     fig, ax = plt.subplots()
@@ -88,7 +88,7 @@ def plottingWithAngle(filename):
 
 #plottingWithAngle("Gen_Data/StepInput.csv")
 
-plottingWithSpeed("Gen_Data/StepInput12volt.csv", "Step Input with 12 volts")
+plottingWithSpeed("Gen_Data/StepInput5volt.csv", "Step Input with 12 volts")
 
 
 plt.show()

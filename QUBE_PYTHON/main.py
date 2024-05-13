@@ -44,7 +44,7 @@ def control(data, lock):
     pid = PID()
     volts = 12
     state_space = SSC.StateSpaceController()
-    observer = OSS.Observer(34.1473 , 231.4649)
+    observer = OSS.Observer(60.8140 , 3411.7)
     systemTest = SVT.SystemValidationTest(12, 4)
 
     print(systemTest.volt)
@@ -52,7 +52,7 @@ def control(data, lock):
     estimatedSpeed = 0
     estimatedAngle = 0
 
-    setAngle = 360 #Degrees
+    setAngle = 90 #Degrees
     setRPM = 2000 #RPM
 
     print(f"{setRPM=}")
@@ -95,17 +95,21 @@ def control(data, lock):
 
         #volts = state_space.regulateAngleWithoutI(angle, speed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
-        volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
+        #volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
 
         #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
         #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
-        #volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
+        volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
+
+        #m_target = setRPM / math.pi * 30
+        m_target = setAngle * 180 / math.pi
         
         estimatedSpeed, estimatedAngle = observer.observerFromMatrix(volts, angle, dt)
 
         ####Debugging
+        print(f"Debugging: volts = {round(volts,2)}")
         #print(f'Debugging: volts = {round(volts,2)}, estAngle = {round(estimatedAngle,2)}, error = {round(error,2)}')
         #print(f'Debugging: volts = {round(volts,2)}, estSpeed = {round(estimatedSpeed * 30/math.pi,2)}, estAngle = {estimatedAngle}, deltaTime = {round(dt,10)}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
 

@@ -18,6 +18,7 @@ class Observer:
         self.B = np.array([[0],[k_t/(R_a*J_tot)]])
         self.prevX_hat = np.array([[0],[0]])
         
+        print(self.A , self.B)
 
     def observerFromMatrix(self, input_voltage, output_theta, dt):
         x_hat = self.prevX_hat + dt*(self.A @ self.prevX_hat + self.B * input_voltage + self.L * (output_theta - self.prevX_hat[0][0]))
