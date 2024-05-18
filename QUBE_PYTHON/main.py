@@ -23,7 +23,7 @@ import ObserverStateSpace as OSS
 import SystemValidationTest as SVT
 
 # Replace with the Arduino port. Can be found in the Arduino IDE (Tools -> Port:)
-port = "COM5"
+port = "/dev/ttyACM0"
 baudrate = 115200
 qube = QUBE(port, baudrate)
 
@@ -38,14 +38,16 @@ t_last = time()
 
 def control(data, lock):
 
-    global m_target, p_target, pid
+    global m_target, p_target, e_speed, e_angle , pid
     m_target = 0
     p_target = 0
+    e_speed = 0
+    e_angle = 0
     pid = PID()
-    volts = 12
+    volts = 0
     state_space = SSC.StateSpaceController()
     observer = OSS.Observer(60.8140 , 3411.7)
-    systemTest = SVT.SystemValidationTest(12, 4)
+    systemTest = SVT.SystemValidationTest(12, 10)
 
     print(systemTest.volt)
 
@@ -68,7 +70,7 @@ def control(data, lock):
         qube.update()
 
         # Gets the logdata and writes it to the log file
-        logdata = qube.getLogData(m_target, p_target)
+        logdata = qube.getLogData(m_target, p_target, e_speed / math.pi * 30, e_angle * 180 / math.pi, setRPM / math.pi * 30, setAngle * 180 / math.pi)
         save_data(logdata)
 
         # Multithreading stuff that must happen. Dont mind it.
@@ -83,33 +85,38 @@ def control(data, lock):
 
         #volts = systemTest.stepInput()
 
-
         qube.setMotorVoltage(volts)
 
         angle = qube.getMotorAngle() /180 * math.pi
         speed = qube.getMotorRPM() * math.pi/30
 
+        setRPM = systemTest.alternatingSpeed()
+
         ## Change Between regulators by commenting and uncommenting
 
-        #volts = pid.regulate(angle, 90, dt)
+        #volts = pid.regulate(angle, setAngle, dt)
 
         #volts = state_space.regulateAngleWithoutI(angle, speed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
-        #volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
+        volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
 
         #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
         #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
-        volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
+        #volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
 
         #m_target = setRPM / math.pi * 30
         m_target = setAngle * 180 / math.pi
         
         estimatedSpeed, estimatedAngle = observer.observerFromMatrix(volts, angle, dt)
 
+        e_speed = estimatedSpeed
+        e_angle = estimatedAngle
+
         ####Debugging
-        print(f"Debugging: volts = {round(volts,2)}")
+        #print(f"RPM={volts}")
+        #print(f"Debugging: volts = {round(volts,2)}")
         #print(f'Debugging: volts = {round(volts,2)}, estAngle = {round(estimatedAngle,2)}, error = {round(error,2)}')
         #print(f'Debugging: volts = {round(volts,2)}, estSpeed = {round(estimatedSpeed * 30/math.pi,2)}, estAngle = {estimatedAngle}, deltaTime = {round(dt,10)}') # \n {pid.kp=}, {pid.ki=}, {pid.kd=} ')
 

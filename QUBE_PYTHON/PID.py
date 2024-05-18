@@ -19,10 +19,20 @@ class PID:
         I = self.lastIntegral + self.ki * error * dt
         D = self.kd * ((error - self.lastError )/ dt)
 
+        if self.useWindup:
+            I = self.windupGuard(I)
+
         self.lastIntegral = I
         self.lastError = error
 
         return P + I + D
+    
+    def windupGuard(self, I):
+        if I > self.windup:
+            I = self.windup
+        elif(I < -self.windup):
+            I = -self.windup
+        return I
 
     def copy(self, pid):
         self.kp = pid.kp

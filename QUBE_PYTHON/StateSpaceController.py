@@ -4,10 +4,10 @@ class StateSpaceController:
 
     def __init__(self):
         #K_name = [k1, k2, k3, scaling]
-        self.K_angle =  [0.1969, -0.0076, 0, 0.1969] #[1.0299, 0.0268, 0, 1.0299]#[0.0644, -0.0248, 0, 0.0644]#[0.5780, 0.0268, 0, 0.5780]
+        self.K_angle =  [0.1969, -0.0076, 0, 0.1969]
         self.K_speed = [0, -0.0248, 0, 0.0172] 
-        self.K_angle_wI = [1.5729, 0.1644, 7.8749]#[2, 0.2, 5.5] #[1.3583, 0.1310, 8.2390] # Pole 8 [1.9985,0.2033,6.1629]#[1.5205, 0.1644, 5.7785]#[1.6335, 0.1644, 10.2987] #[0.5804, 0.1042, 1.9310]# pole 20 [0.7524, 0.1472, 2.5747, 0] # pole 10 [0.4840, 0.0612, 1.2873, 0] #[1.1283, 0.0612, 4.6228, 0] #[4.706, 0.2848,34.6818, 0] #[1.954, 0.1128, 11.5606, 0]
-        self.K_speed_wI = [0, 0.1472, 0.6880, 0]
+        self.K_angle_wI = [1.5729, 0.1644, 7.8749]
+        self.K_speed_wI = [0,0.0612,0.3440]#[0, 0.1472, 0.6880, 0]#[0,0.0612,0.3440]#[0,0.2332,1.032]#Normal: [0,0.0612,0.3440]# Close: [0, 0.1472, 0.6880, 0]
         
         self.prevAngleIntegral = 0
         self.prevSpeedIntegral = 0
@@ -17,7 +17,7 @@ class StateSpaceController:
         setpoint = setpoint * self.K_angle[3]
 
         input_voltage = (setpoint - (output_theta * self.K_angle[0] + output_omega * self.K_angle[1]))
-
+        
         #Voltage Limiters
         if input_voltage < -24:
             input_voltage = -24
@@ -27,13 +27,14 @@ class StateSpaceController:
         return input_voltage
     
     def regulateSpeedWithoutI(self, output_omega, setpoint):
-        input_voltage = setpoint * self.K_speed[3] - (output_omega - setpoint) * self.K_angle[1]
+        input_voltage = setpoint * self.K_speed[3] - output_omega * self.K_speed[1]
+        #input_voltage = setpoint * self.K_speed[3] - (output_omega - setpoint) * self.K_angle[1]
     
         #Voltage Limiters
-        if input_voltage < -24:
-            input_voltage = -24
-        elif input_voltage > 24:
-            input_voltage = 24
+        if input_voltage < -20:
+            input_voltage = -20
+        elif input_voltage > 20:
+            input_voltage = 20
 
         return input_voltage
     
@@ -44,17 +45,23 @@ class StateSpaceController:
         self.prevAngleIntegral = x_N
 
         #Kp and Kd calc
-        kx = (setpoint - output_theta) * self.K_angle_wI[0] - output_omega * self.K_angle_wI[1]
+        #kx = (setpoint - output_theta) * self.K_angle_wI[0] - output_omega * self.K_angle_wI[1]
+        kx = - output_theta * self.K_angle_wI[0] - output_omega * self.K_angle_wI[1]
+
+        #if (0.01 < kx < 0.20):
+        #    kx = -0.20
+        #elif (-0.01 > kx > -0.20):
+        #    kx = 0.20
 
         #print(f"{kx=}, {x_N=}")
         #u(t)
         input_voltage = kx + self.K_angle_wI[2]*x_N
         
         #Voltage Limiters
-        if input_voltage < -24:
-            input_voltage = -24
-        elif input_voltage > 24:
-            input_voltage = 24
+        if input_voltage < -20:
+            input_voltage = -20
+        elif input_voltage > 20:
+            input_voltage = 20
 
         return input_voltage
     
@@ -70,9 +77,9 @@ class StateSpaceController:
         input_voltage = - kx + self.K_angle_wI[2]*x_N
         
         #Voltage Limiters
-        if input_voltage < -24:
-            input_voltage = -24
-        elif input_voltage > 24:
-            input_voltage = 24
+        if input_voltage < -20:
+            input_voltage = -20
+        elif input_voltage > 20:
+            input_voltage = 20
 
         return input_voltage

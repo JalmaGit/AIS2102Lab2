@@ -88,7 +88,7 @@ def plottingWithAngle(filename):
 
 #plottingWithAngle("Gen_Data/StepInput.csv")
 
-plottingWithSpeed("Gen_Data/StepInput5volt.csv", "Step Input with 12 volts")
+plottingWithSpeed("Gen_Data/Validation/StepInput5volt.csv", "Step Input with 12 volts")
 
 
 plt.show()

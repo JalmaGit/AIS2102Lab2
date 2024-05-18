@@ -140,7 +140,7 @@ class QUBE:
         current = (current_MSB << 8) | current_LSB
         return current
 
-    def getLogData(self, motorSetpoint, pendulumSetpoint):
+    def getLogData(self, motorSetpoint, pendulumSetpoint, e_speed, e_angle, setSpeed, setAngle):
         return [
             self.motorAngle,
             motorSetpoint,
@@ -149,6 +149,10 @@ class QUBE:
             self.rpm,
             self.voltage,
             self.current,
+            e_speed,
+            e_angle,
+            setSpeed, 
+            setAngle,
         ]
 
     def getPlotData(self, motorSetpoint, pendulumSetpoint):
