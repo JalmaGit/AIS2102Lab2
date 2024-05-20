@@ -46,7 +46,11 @@ def control(data, lock):
     pid = PID()
     volts = 0
     state_space = SSC.StateSpaceController()
+<<<<<<< Updated upstream
     observer = OSS.Observer(70.5828 , 3913.7)
+=======
+    observer = OSS.Observer(70.5828, 3913.7) #OLD (60.8140, 3411.7)
+>>>>>>> Stashed changes
     systemTest = SVT.SystemValidationTest(12, 10)
 
     print(systemTest.volt)
@@ -82,8 +86,9 @@ def control(data, lock):
         ### Your code goes here
         
         ## System Tests
-
         #volts = systemTest.stepInput()
+        #volts = systemTest.rampInput()
+        #volts = systemTest.sineWaveInput()
 
         qube.setMotorVoltage(volts)
 
