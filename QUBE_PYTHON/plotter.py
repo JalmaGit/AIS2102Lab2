@@ -11,7 +11,7 @@ def find_markers(data):
     r = 0
     for i in data["rpm"]:
         r += 1
-        if i > 1160 and not(x == -1):
+        if i > 2800 and not(x == -1):
             x += 1
 
         if x == 20:
@@ -51,10 +51,10 @@ def plottingWithSpeed(filename, title):
     markers_on_0 = find_other_markers(dataframe,markers_on,0.0)
     
     fig, ax = plt.subplots()
-    ax.plot(dataframe["time"], dataframe["rpm"], '-', label='System Response')
-    ax.plot(dataframe["time"], dataframe["rpm"], 'bo',markevery=markers_on, label=f'Max Speed = {dataframe["rpm"][markers_on[3]]}rpm')#, T_p = {round(dataframe["time"][markers_on[3]],2)}sec')
-    ax.plot(dataframe["time"], dataframe["rpm"], 'ro',markevery=markers_on_98, label=f'98% Speed = {dataframe["rpm"][markers_on_98[3]]}rpm, T_s = {round(dataframe["time"][markers_on_98[3]],2)}sec')
-    ax.plot(dataframe["time"], dataframe["rpm"], 'go',markevery=markers_on_0, label=f'0% Speed = {dataframe["rpm"][markers_on_0[3]]}rpm, T_0 {round(dataframe["time"][markers_on_0[3]],2)}sec')
+    ax.plot(dataframe["time"].to_numpy(), dataframe["rpm"].to_numpy(), '-', label='System Response')
+    ax.plot(dataframe["time"].to_numpy(), dataframe["rpm"].to_numpy(), 'bo',markevery=markers_on, label=f'Max Speed = {dataframe["rpm"][markers_on[3]]}rpm')#, T_p = {round(dataframe["time"][markers_on[3]],2)}sec')
+    #ax.plot(dataframe["time"].to_numpy(), dataframe["rpm"].to_numpy(), 'ro',markevery=markers_on_98, label=f'98% Speed = {dataframe["rpm"][markers_on_98[3]]}rpm, T_s = {round(dataframe["time"][markers_on_98[3]],2)}sec')
+    #ax.plot(dataframe["time"].to_numpy(), dataframe["rpm"].to_numpy(), 'go',markevery=markers_on_0, label=f'0% Speed = {dataframe["rpm"][markers_on_0[3]]}rpm, T_0 {round(dataframe["time"][markers_on_0[3]],2)}sec')
     ax.set_xlabel("time in seconds")
     ax.set_ylabel("revoultions per minute")
     ax.set_title(title, loc='left')
@@ -68,10 +68,10 @@ def plottingWithAngle(filename):
     dataframe = pd.read_csv(filename)
 
     fig, ax = plt.subplots()
-    ax.plot(dataframe["time"], dataframe["motor_angle"], '-', label='System Response')
+    ax.plot(dataframe["time"].to_numpy(), dataframe["motor_angle"].to_numpy(), '-', label='System Response')
     ax.set_xlabel("Time in seconds")
     ax.set_ylabel("Motor angle from start in degrees")
-    ax.set_title("Step Input with angle", loc='left')
+    ax.set_title("Ramp Input with angle", loc='left')
     ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%.1fs'))
     ax.grid(True)
     fig.autofmt_xdate()
@@ -79,16 +79,18 @@ def plottingWithAngle(filename):
     fig.show()
 
 
-#plottingWithSpeed("Gen_Data/StepInput.csv", "Step Input")
-#plottingWithSpeed("Gen_Data/RampInput6.csv", "Ramp input with u(t) = 6t")
-#plottingWithSpeed("Gen_Data/RampInput5.csv", "Ramp input with u(t) = 5t")
-#plottingWithSpeed("Gen_Data/Parabolic2.csv", "Parabolic input with u(t) = 2t^2")
-#plottingWithSpeed("Gen_Data/Parabolic1_47.csv", "Parabolic input with u(t) = 1.47t^2")
-#plottingWithSpeed("Gen_Data/SineWaveOmegaPI_4.csv", "Sine wave input with 9sin(4/PI * t) + 9")
+#plottingWithSpeed("Gen_Data/Validation/StepInput.csv", "Step Input")
+#plottingWithSpeed("Gen_Data/Validation/RampInput6.csv", "Ramp input with u(t) = 6t")
+#plottingWithSpeed("Gen_Data/Validation/RampInput5.csv", "Ramp input with u(t) = 5t")
+#plottingWithSpeed("Gen_Data/Validation/Parabolic2.csv", "Parabolic input with u(t) = 2t^2")
+#plottingWithSpeed("Gen_Data/Validation/Parabolic1_47.csv", "Parabolic input with u(t) = 1.47t^2")
+#plottingWithSpeed("Gen_Data/Validation/SineWaveOmegaPI_4.csv", "Sine wave input with 9sin(4/PI * t) + 9")
 
-#plottingWithAngle("Gen_Data/StepInput.csv")
+#plottingWithAngle("Gen_Data/Validation/StepInput12volt.csv")
+plottingWithAngle("Gen_Data/Validation/RampInput6.csv")
+#plottingWithAngle("Gen_Data/Validation/SineWaveOmegaPI_4.csv")
 
-plottingWithSpeed("Gen_Data/Validation/StepInput5volt.csv", "Step Input with 12 volts")
+#plottingWithSpeed("Gen_Data/Validation/StepInput12volt.csv", "Step Input with 12 volts")
 
 
 plt.show()
