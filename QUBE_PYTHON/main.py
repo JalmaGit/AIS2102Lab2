@@ -46,7 +46,7 @@ def control(data, lock):
     pid = PID()
     volts = 0
     state_space = SSC.StateSpaceController()
-    observer = OSS.Observer(60.8140 , 3411.7)
+    observer = OSS.Observer(70.5828 , 3913.7)
     systemTest = SVT.SystemValidationTest(12, 10)
 
     print(systemTest.volt)
@@ -98,13 +98,13 @@ def control(data, lock):
 
         #volts = state_space.regulateAngleWithoutI(angle, speed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(speed, setRPM)
-        volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
+        #volts = state_space.regulateAngleWithI(angle, speed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
 
         #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
         #volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
         #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
-        #volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
+        volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
 
         #m_target = setRPM / math.pi * 30
         m_target = setAngle * 180 / math.pi
