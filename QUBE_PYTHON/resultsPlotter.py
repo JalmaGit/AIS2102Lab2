@@ -3,7 +3,7 @@ import matplotlib.ticker as ticker
 import numpy as np
 import pandas as pd
 
-def anglePlotwithCurrent(fileName, Title, Start = 100, Stop=10000):
+def anglePlotwithCurrent(fileName, Title, Start = 100, Stop=100000):
 
     df = pd.read_csv(fileName)
     df = df.iloc[Start:Stop]  
@@ -29,7 +29,7 @@ def anglePlotwithCurrent(fileName, Title, Start = 100, Stop=10000):
     plt.show()
 
 
-def speedPlotwithCurrent(fileName, Title, Start = 100, Stop=10000):
+def speedPlotwithCurrent(fileName, Title, Start = 100, Stop=100000):
 
     df = pd.read_csv(fileName)
     df = df.iloc[Start:Stop]  
@@ -107,14 +107,39 @@ def anglePlotwithCurrentObs(fileName, Title, Start = 200, Stop=100000):
     plt.show()
 
 
+def voltsVsSpeed(fileName, Title, Start = 2000, Stop=2400):
 
-#fileName = "Gen_Data/WithIntegrator/SpeedControlL.csv"
-#title = "Speed Control with Integrator"
-#speedPlotwithCurrent(fileName, title, 4000, 20000)
+    df = pd.read_csv(fileName)
+    df = df.iloc[Start:Stop]  
 
-#fileName = "Gen_Data/WithoutIntegrator/SpeedControl.csv"
-#title = "Speed Control without Integrator"
-#speedPlotwithCurrent(fileName, title, 4000, 10000)
+    columnsNeeded = ["time", "motor_angle", "rpm","voltage", "current"]
+
+    df = df[columnsNeeded]
+
+    fig, ax = plt.subplots()
+    ax.plot(df["voltage"].to_numpy(), df["rpm"].to_numpy(), '-', label='Qube Speed')
+    ax.set_xlabel("Voltage (V)")
+    ax.set_ylabel("Speed (RPM)")
+    ax.set_title("Motor Speed vs Voltage")
+    ax.legend()
+
+    #ax2 = ax.twinx() 
+    #ax2.plot(df["time"].to_numpy(), df["voltage"].to_numpy()*100, 'r-', label='Voltage')
+    #ax2.tick_params(axis='y', labelcolor='tab:red')
+    #ax2.legend()
+
+    fig.show()
+    plt.show()
+
+
+
+fileName = "Gen_Data/WithIntegrator/SpeedControlL.csv"
+title = "Speed Control with Integrator"
+speedPlotwithCurrent(fileName, title)
+
+fileName = "Gen_Data/WithoutIntegrator/SpeedControl.csv"
+title = "Speed Control without Integrator"
+speedPlotwithCurrent(fileName, title)
 
 fileName = "Gen_Data/ObserverNoIntegrator/SpeedControl.csv"
 title = "Speed Control with Observer and without Integrator"
@@ -132,11 +157,19 @@ speedPlotwithCurrentObs(fileName, title)
 #title = "Angle Control without Integrator"
 #anglePlotwithCurrent(fileName, title, 1000, 10000)
 
-fileName = "Gen_Data/ObserverNoIntegrator/AngleControl.csv"
-title = "Angle Control with Observer and without Integrator"
-anglePlotwithCurrentObs(fileName, title)
+#fileName = "Gen_Data/ObserverNoIntegrator/AngleControl.csv"
+#title = "Angle Control with Observer and without Integrator"
+#anglePlotwithCurrentObs(fileName, title)
 
-fileName = "Gen_Data/ObserverWIntegrator/AngleControl.csv"
-title = "Angle Control with Observer and with Integrator"
-anglePlotwithCurrentObs(fileName, title)
+#fileName = "Gen_Data/ObserverWIntegrator/AngleControl.csv"
+#title = "Angle Control with Observer and with Integrator"
+#anglePlotwithCurrentObs(fileName, title)
+
+#fileName = "Gen_Data/ObserverWIntegrator/AngleControl.csv"
+#title = "Angle Control with Observer and with Integrator"
+#anglePlotwithCurrentObs(fileName, title)
+
+#fileName = "Gen_Data/Validation/SineWaveAmp15v.csv"
+#title = "Speed vs Voltage"
+#voltsVsSpeed(fileName, title)
 

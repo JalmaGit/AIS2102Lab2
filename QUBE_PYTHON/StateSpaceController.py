@@ -26,7 +26,7 @@ class StateSpaceController:
     
     def regulateSpeedWithoutI(self, output_omega, setpoint):
         input_voltage = setpoint * self.K_speed[3] - output_omega * self.K_speed[1]
-        #input_voltage = setpoint * self.K_speed[3] - (output_omega - setpoint) * self.K_angle[1]
+        #input_voltage = setpoint * self.K_speed[3] - (output_omega - setpoint) * self.K_speed[1]
     
         #Voltage Limiters
         if input_voltage < -24:
@@ -59,10 +59,10 @@ class StateSpaceController:
         x_N = self.prevSpeedIntegral + (setpoint - output_omega) * dt
         self.prevSpeedIntegral = x_N
 
-        kx = output_omega * self.K_angle_wI[1]
+        kx = output_omega * self.K_speed_wI[1]
 
         #u(t)
-        input_voltage = - kx + self.K_angle_wI[2]*x_N
+        input_voltage = - kx + self.K_speed_wI[2]*x_N
         
         #Voltage Limiters
         if input_voltage < -24:

@@ -23,7 +23,7 @@ import ObserverStateSpace as OSS
 import SystemValidationTest as SVT
 
 # Replace with the Arduino port. Can be found in the Arduino IDE (Tools -> Port:)
-port = "/dev/ttyACM0"
+port = "COM5"
 baudrate = 115200
 qube = QUBE(port, baudrate)
 
@@ -104,7 +104,7 @@ def control(data, lock):
         #volts = state_space.regulateSpeedWithI(speed, setRPM, dt)
 
         #volts = state_space.regulateAngleWithoutI(estimatedAngle, estimatedSpeed, setAngle)
-        #volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
+        volts = state_space.regulateSpeedWithoutI(estimatedSpeed, setRPM)
         #volts = state_space.regulateAngleWithI(estimatedAngle, estimatedSpeed, setAngle, dt)
         #volts = state_space.regulateSpeedWithI(estimatedSpeed, setRPM, dt)
 
